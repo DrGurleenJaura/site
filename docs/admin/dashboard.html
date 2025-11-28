@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DGx Freelance Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --bg-alt: #ffffff;
+      --border: #d0d4dd;
+      --accent: #4b6fff;
+      --accent-soft: #e2e7ff;
+      --text-main: #1f2933;
+      --text-soft: #6b7280;
+      --danger: #e11d48;
+      --success: #16a34a;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #eef0f5 0, #f4f5f7 40%, #e5e7eb 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(209, 213, 219, 0.6);
+      backdrop-filter: blur(10px);
+      padding: 22px 26px 26px;
+    }
+
+    header.app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+      padding-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 0, #f9fafb 0, #e5e7eb 35%, #d1d5db 100%);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .brand-text-main {
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      font-size: 18px;
+    }
+
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(248, 250, 252, 0.8);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 13px;
+      padding: 7px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.16s ease;
+      background: transparent;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, #f9fafb 0, #4f46e5 35%, #1d4ed8 100%);
+      color: #f9fafb;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.33);
+      border-color: rgba(37, 99, 235, 0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.45);
+      filter: brightness(1.05);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.8);
+      background: rgba(248, 250, 252, 0.9);
+      color: var(--text-soft);
+    }
+
+    main {
+      margin-top: 10px;
+    }
+
+    .grid-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f5f5f7, #ffffff);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      padding: 12px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 9px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .stat-tag {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      margin-left: auto;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.9);
+      padding-bottom: 4px;
+    }
+
+    .tab {
+      font-size: 13px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      color: var(--text-soft);
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.16s ease;
+    }
+
+    .tab-count {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(229, 231, 235, 0.9);
+      color: #4b5563;
+    }
+
+    .tab.active {
+      background: rgba(239, 246, 255, 0.9);
+      border-color: rgba(129, 140, 248, 0.9);
+      color: #1f2937;
+    }
+
+    .tab.active .tab-count {
+      background: rgba(129, 140, 248, 0.12);
+      color: #4338ca;
+    }
+
+    .tab-spacer {
+      flex: 1;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding: 7px 28px 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      font-size: 12px;
+      outline: none;
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    .search-box span {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .tab-panels {
+      margin-top: 10px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel-inner {
+      background: rgba(249, 250, 251, 0.9);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      padding: 12px;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .panel-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .panel-subtitle {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .data-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+      .app-shell {
+        padding: 14px 14px 18px;
+      }
+      .grid-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .data-layout {
+        grid-template-columns: 1fr;
+      }
+      header.app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+    }
+
+    thead {
+      background: linear-gradient(90deg, #f3f4f6, #e5e7eb);
+    }
+
+    th, td {
+      padding: 7px 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.85);
+    }
+
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(248, 250, 252, 0.95);
+    }
+
+    .tag-pill {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tag-active {
+      background: rgba(34, 197, 94, 0.09);
+      color: #15803d;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+
+    .tag-open {
+      background: rgba(59, 130, 246, 0.09);
+      color: #1d4ed8;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .tag-ongoing {
+      background: rgba(234, 179, 8, 0.12);
+      color: #92400e;
+      border: 1px solid rgba(234, 179, 8, 0.45);
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      padding: 10px;
+    }
+
+    .form-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .form-row-full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 11px;
+      margin-bottom: 2px;
+      display: block;
+      color: var(--text-soft);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      font-size: 12px;
+      outline: none;
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    textarea {
+      min-height: 52px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(129, 140, 248, 0.9);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+      background: #ffffff;
+    }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .badge-soft {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      color: #4b5563;
+    }
+
+    .error-banner {
+      background: rgba(248, 113, 113, 0.08);
+      border-radius: 10px;
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      padding: 6px 8px;
+      font-size: 11px;
+      color: #b91c1c;
+      margin-bottom: 6px;
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: 0.2s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      background: rgba(243, 244, 246, 0.8);
+      border-radius: 999px;
+      padding: 3px 7px;
+      border: 1px dashed rgba(209, 213, 219, 0.9);
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">DGx</div>
+        <div>
+          <div class="brand-text-main">DGx Freelance Hub</div>
+          <div class="brand-text-sub">Internal dashboard · Freelancers & projects</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          Backend: http://localhost:4000
+        </div>
+        <button class="btn btn-ghost" type="button" id="refreshAllBtn">Refresh data</button>
+        <a href="/" class="btn btn-primary" style="text-decoration:none;">
+          Back to Website
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- Stats row -->
+      <section class="grid-stats">
+        <article class="stat-card">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="stat-label">Freelancers</div>
+            <span class="stat-tag" id="statFreelancerActiveTag">live</span>
+          </div>
+          <div class="stat-value" id="statFreelancers">0</div>
+          <div class="stat-sub">Total profiles in your pool</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Projects</div>
+          <div class="stat-value" id="statProjects">0</div>
+          <div class="stat-sub">DGx freelance & vendor projects</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Assignments</div>
+          <div class="stat-value" id="statAssignments">0</div>
+          <div class="stat-sub">Active mappings between people & projects</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Today</div>
+          <div class="stat-value" id="statTodayDate">—</div>
+          <div class="stat-sub">
+            <span class="chip">
+              <span class="chip-dot"></span>
+              Keep this tab open while working
+            </span>
+          </div>
+        </article>
+      </section>
+
+      <!-- Tabs -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="freelancers">
+          Freelancers
+          <span class="tab-count" id="tabCountFreelancers">0</span>
+        </button>
+        <button class="tab" data-tab="projects">
+          Projects
+          <span class="tab-count" id="tabCountProjects">0</span>
+        </button>
+        <button class="tab" data-tab="assignments">
+          Assignments
+          <span class="tab-count" id="tabCountAssignments">0</span>
+        </button>
+        <div class="tab-spacer"></div>
+        <div class="search-box">
+          <input id="searchInput" type="search" placeholder="Quick search (name, email, title...)" />
+          <span>⌕</span>
+        </div>
+      </nav>
+
+      <!-- Panels -->
+      <section class="tab-panels">
+        <!-- FREELANCERS PANEL -->
+        <div class="panel active" id="panel-freelancers">
+          <div class="panel-inner">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <div class="panel-title">Freelancers</div>
+                <div class="panel-subtitle">
+                  View, search and add freelance / vendor resources for DGx projects.
+                </div>
+              </div>
+              <div class="panel-actions">
+                <span class="badge-soft">Columns: name, email, skills, location, rate, status</span>
+              </div>
+            </div>
+
+            <div id="freelancerError" class="error-banner"></div>
+
+            <div class="data-layout">
+              <!-- Table -->
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Skills</th>
+                      <th>Location</th>
+                      <th>Rate (USD/hr)</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="freelancerTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Form -->
+              <aside class="form-card">
+                <div class="form-title">Add new freelancer</div>
+                <div class="form-subtitle">
+                  Keep details short and consistent. You can use this pool later when mapping to projects.
+                </div>
+
+                <form id="freelancerForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="fName">Full name *</label>
+                      <input id="fName" name="name" required />
+                    </div>
+                    <div>
+                      <label for="fEmail">Email *</label>
+                      <input id="fEmail" name="email" type="email" required />
+                    </div>
+                    <div>
+                      <label for="fLocation">Location</label>
+                      <input id="fLocation" name="location" placeholder="e.g., Mohali, Remote" />
+                    </div>
+                    <div>
+                      <label for="fRate">Hourly rate (USD)</label>
+                      <input id="fRate" name="hourly_rate" type="number" step="0.01" min="0" />
+                    </div>
+                    <div class="form-row-full">
+                      <label for="fSkills">Skills / tags</label>
+                      <input
+                        id="fSkills"
+                        name="skills"
+                        placeholder="Video annotation, transcription, QA, etc."
+                      />
+                    </div>
+                    <div>
+                      <label for="fStatus">Status</label>
+                      <select id="fStatus" name="status">
+                        <option value="active">Active</option>
+                        <option value="on-hold">On hold</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                    <div class="form-row-full">
+                      <label for="fNotes">Notes</label>
+                      <textarea
+                        id="fNotes"
+                        name="notes"
+                        placeholder="Any special notes (availability, language, strengths)..."
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="form-footer">
+                    <span class="helper-text">* Email must be unique per freelancer.</span>
+                    <button type="submit" class="btn btn-primary btn-small">Save freelancer</button>
+                  </div>
+                </form>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECTS PANEL -->
+        <div class="panel" id="panel-projects">
+          <div class="panel-inner">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <div class="panel-title">Projects</div>
+                <div class="panel-subtitle">
+                  Track annotation, content, AI and IT tasks you run with DGx freelancers.
+                </div>
+              </div>
+              <div class="panel-actions">
+                <span class="badge-soft">Add brief title + client + basic dates & budget</span>
+              </div>
+            </div>
+
+            <div id="projectError" class="error-banner"></div>
+
+            <div class="data-layout">
+              <!-- Table -->
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Client</th>
+                      <th>Status</th>
+                      <th>Budget</th>
+                      <th>Start</th>
+                      <th>End</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Form -->
+              <aside class="form-card">
+                <div class="form-title">Create project</div>
+                <div class="form-subtitle">
+                  For each campaign / client job, create one project entry, then map freelancers via
+                  Assignments.
+                </div>
+
+                <form id="projectForm">
+                  <div class="form-grid">
+                    <div class="form-row-full">
+                      <label for="pTitle">Project title *</label>
+                      <input
+                        id="pTitle"
+                        name="title"
+                        placeholder="e.g., Video QA – E-commerce catalog – Q1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label for="pClient">Client / partner</label>
+                      <input
+                        id="pClient"
+                        name="client_name"
+                        placeholder="e.g., DataForce, Internal, DGx Labs"
+                      />
+                    </div>
+                    <div>
+                      <label for="pStatus">Status</label>
+                      <select id="pStatus" name="status">
+                        <option value="open">Open</option>
+                        <option value="in-progress">In progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="on-hold">On hold</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="pBudget">Budget (USD)</label>
+                      <input id="pBudget" name="budget" type="number" step="0.01" min="0" />
+                    </div>
+                    <div>
+                      <label for="pStart">Start date</label>
+                      <input id="pStart" name="start_date" type="date" />
+                    </div>
+                    <div>
+                      <label for="pEnd">End date</label>
+                      <input id="pEnd" name="end_date" type="date" />
+                    </div>
+                    <div class="form-row-full">
+                      <label for="pNotes">Notes</label>
+                      <textarea
+                        id="pNotes"
+                        name="notes"
+                        placeholder="Scope, deliverables, language pairs, etc."
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="form-footer">
+                    <span class="helper-text">You can update details later via the API.</span>
+                    <button type="submit" class="btn btn-primary btn-small">Save project</button>
+                  </div>
+                </form>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASSIGNMENTS PANEL -->
+        <div class="panel" id="panel-assignments">
+          <div class="panel-inner">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <div class="panel-title">Assignments</div>
+                <div class="panel-subtitle">
+                  Connect freelancers to projects with simple assignment records.
+                </div>
+              </div>
+              <div class="panel-actions">
+                <span class="badge-soft">Uses freelancer + project IDs from the other two tabs</span>
+              </div>
+            </div>
+
+            <div id="assignmentError" class="error-banner"></div>
+
+            <div class="data-layout">
+              <!-- Table -->
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Freelancer ID</th>
+                      <th>Project ID</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Start</th>
+                      <th>End</th>
+                    </tr>
+                  </thead>
+                  <tbody id="assignmentTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Form -->
+              <aside class="form-card">
+                <div class="form-title">Create assignment</div>
+                <div class="form-subtitle">
+                  Use IDs from the tables on Freelancers and Projects tabs. Later you can build more
+                  advanced views.
+                </div>
+
+                <form id="assignmentForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="aFreelancerId">Freelancer ID *</label>
+                      <input id="aFreelancerId" name="freelancer_id" type="number" required />
+                    </div>
+                    <div>
+                      <label for="aProjectId">Project ID *</label>
+                      <input id="aProjectId" name="project_id" type="number" required />
+                    </div>
+                    <div>
+                      <label for="aRole">Role</label>
+                      <input
+                        id="aRole"
+                        name="role"
+                        placeholder="Lead annotator, QA, PM, etc."
+                      />
+                    </div>
+                    <div>
+                      <label for="aStatus">Status</label>
+                      <select id="aStatus" name="status">
+                        <option value="ongoing">Ongoing</option>
+                        <option value="completed">Completed</option>
+                        <option value="on-hold">On hold</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="aStart">Start date</label>
+                      <input id="aStart" name="start_date" type="date" />
+                    </div>
+                    <div>
+                      <label for="aEnd">End date</label>
+                      <input id="aEnd" name="end_date" type="date" />
+                    </div>
+                  </div>
+                  <div class="form-footer">
+                    <span class="helper-text">Keep IDs consistent with the other tables.</span>
+                    <button type="submit" class="btn btn-primary btn-small">Save assignment</button>
+                  </div>
+                </form>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = "http://localhost:4000/api";
+
+    let freelancers = [];
+    let projects = [];
+    let assignments = [];
+    let searchTerm = "";
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    function setToday() {
+      const el = document.getElementById("statTodayDate");
+      const now = new Date();
+      const options = { day: "2-digit", month: "short", year: "numeric" };
+      el.textContent = now.toLocaleDateString(undefined, options);
+    }
+
+    function filterBySearch(list, keys) {
+      if (!searchTerm) return list;
+      const term = searchTerm.toLowerCase();
+      return list.filter((item) =>
+        keys.some((k) => {
+          const val = item[k];
+          return val && String(val).toLowerCase().includes(term);
+        })
+      );
+    }
+
+    function updateStats() {
+      document.getElementById("statFreelancers").textContent = freelancers.length;
+      document.getElementById("statProjects").textContent = projects.length;
+      document.getElementById("statAssignments").textContent = assignments.length;
+
+      document.getElementById("tabCountFreelancers").textContent = freelancers.length;
+      document.getElementById("tabCountProjects").textContent = projects.length;
+      document.getElementById("tabCountAssignments").textContent = assignments.length;
+    }
+
+    function renderFreelancers() {
+      const tbody = document.getElementById("freelancerTableBody");
+      tbody.innerHTML = "";
+
+      const filtered = filterBySearch(freelancers, ["name", "email", "skills", "location"]);
+
+      if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.textContent = "No freelancers yet. Add one using the form on the right.";
+        cell.style.fontSize = "12px";
+        cell.style.color = "#6b7280";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach((f) => {
+        const tr = document.createElement("tr");
+
+        const tdName = document.createElement("td");
+        tdName.textContent = f.name || "";
+        tr.appendChild(tdName);
+
+        const tdEmail = document.createElement("td");
+        tdEmail.textContent = f.email || "";
+        tr.appendChild(tdEmail);
+
+        const tdSkills = document.createElement("td");
+        tdSkills.textContent = f.skills || "";
+        tr.appendChild(tdSkills);
+
+        const tdLocation = document.createElement("td");
+        tdLocation.textContent = f.location || "";
+        tr.appendChild(tdLocation);
+
+        const tdRate = document.createElement("td");
+        tdRate.textContent = f.hourly_rate != null ? f.hourly_rate : "";
+        tr.appendChild(tdRate);
+
+        const tdStatus = document.createElement("td");
+        const span = document.createElement("span");
+        span.classList.add("tag-pill");
+        if (f.status === "active") {
+          span.classList.add("tag-active");
+        } else if (f.status === "on-hold") {
+          span.classList.add("tag-ongoing");
+        } else {
+          span.style.background = "rgba(148, 163, 184, 0.2)";
+          span.style.border = "1px solid rgba(148, 163, 184, 0.6)";
+          span.style.color = "#4b5563";
+        }
+        span.textContent = f.status || "—";
+        tdStatus.appendChild(span);
+        tr.appendChild(tdStatus);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderProjects() {
+      const tbody = document.getElementById("projectTableBody");
+      tbody.innerHTML = "";
+
+      const filtered = filterBySearch(projects, ["title", "client_name", "status"]);
+
+      if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.textContent = "No projects yet. Create one using the form on the right.";
+        cell.style.fontSize = "12px";
+        cell.style.color = "#6b7280";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach((p) => {
+        const tr = document.createElement("tr");
+
+        const tdTitle = document.createElement("td");
+        tdTitle.textContent = p.title || "";
+        tr.appendChild(tdTitle);
+
+        const tdClient = document.createElement("td");
+        tdClient.textContent = p.client_name || "";
+        tr.appendChild(tdClient);
+
+        const tdStatus = document.createElement("td");
+        const span = document.createElement("span");
+        span.classList.add("tag-pill");
+        if (p.status === "open") span.classList.add("tag-open");
+        else if (p.status === "in-progress") span.classList.add("tag-ongoing");
+        else if (p.status === "completed") {
+          span.style.background = "rgba(34, 197, 94, 0.09)";
+          span.style.border = "1px solid rgba(34, 197, 94, 0.45)";
+          span.style.color = "#15803d";
+        } else {
+          span.style.background = "rgba(148, 163, 184, 0.2)";
+          span.style.border = "1px solid rgba(148, 163, 184, 0.6)";
+          span.style.color = "#4b5563";
+        }
+        span.textContent = p.status || "—";
+        tdStatus.appendChild(span);
+        tr.appendChild(tdStatus);
+
+        const tdBudget = document.createElement("td");
+        tdBudget.textContent = p.budget != null ? p.budget : "";
+        tr.appendChild(tdBudget);
+
+        const tdStart = document.createElement("td");
+        tdStart.textContent = p.start_date || "";
+        tr.appendChild(tdStart);
+
+        const tdEnd = document.createElement("td");
+        tdEnd.textContent = p.end_date || "";
+        tr.appendChild(tdEnd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderAssignments() {
+      const tbody = document.getElementById("assignmentTableBody");
+      tbody.innerHTML = "";
+
+      const filtered = filterBySearch(assignments, ["role", "status", "freelancer_id", "project_id"]);
+
+      if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 7;
+        cell.textContent =
+          "No assignments yet. Once you have at least one freelancer + project, link them here.";
+        cell.style.fontSize = "12px";
+        cell.style.color = "#6b7280";
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach((a) => {
+        const tr = document.createElement("tr");
+
+        const tdId = document.createElement("td");
+        tdId.textContent = a.id != null ? a.id : "";
+        tr.appendChild(tdId);
+
+        const tdF = document.createElement("td");
+        tdF.textContent = a.freelancer_id != null ? a.freelancer_id : "";
+        tr.appendChild(tdF);
+
+        const tdP = document.createElement("td");
+        tdP.textContent = a.project_id != null ? a.project_id : "";
+        tr.appendChild(tdP);
+
+        const tdRole = document.createElement("td");
+        tdRole.textContent = a.role || "";
+        tr.appendChild(tdRole);
+
+        const tdStatus = document.createElement("td");
+        const span = document.createElement("span");
+        span.classList.add("tag-pill");
+        if (a.status === "ongoing") span.classList.add("tag-ongoing");
+        else if (a.status === "completed") {
+          span.style.background = "rgba(34, 197, 94, 0.09)";
+          span.style.border = "1px solid rgba(34, 197, 94, 0.45)";
+          span.style.color = "#15803d";
+        } else {
+          span.style.background = "rgba(148, 163, 184, 0.2)";
+          span.style.border = "1px solid rgba(148, 163, 184, 0.6)";
+          span.style.color = "#4b5563";
+        }
+        span.textContent = a.status || "—";
+        tdStatus.appendChild(span);
+        tr.appendChild(tdStatus);
+
+        const tdStart = document.createElement("td");
+        tdStart.textContent = a.start_date || "";
+        tr.appendChild(tdStart);
+
+        const tdEnd = document.createElement("td");
+        tdEnd.textContent = a.end_date || "";
+        tr.appendChild(tdEnd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function fetchJSON(url, errorElementId) {
+      const errorEl = document.getElementById(errorElementId);
+      if (errorEl) errorEl.style.display = "none";
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return await res.json();
+      } catch (err) {
+        console.error("Error fetching", url, err);
+        if (errorEl) {
+          errorEl.textContent = "Failed to load data (" + err.message + "). Check backend logs.";
+          errorEl.style.display = "block";
+        }
+        showToast("Error loading data. See console/logs.");
+        return [];
+      }
+    }
+
+    async function loadAll() {
+      freelancers = await fetchJSON(API_BASE + "/freelancers", "freelancerError");
+      projects = await fetchJSON(API_BASE + "/projects", "projectError");
+      assignments = await fetchJSON(API_BASE + "/assignments", "assignmentError");
+
+      updateStats();
+      renderFreelancers();
+      renderProjects();
+      renderAssignments();
+    }
+
+    function setupTabs() {
+      const tabs = document.querySelectorAll(".tab");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.getAttribute("data-tab");
+
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          document.getElementById("panel-" + target).classList.add("active");
+        });
+      });
+    }
+
+    function setupSearch() {
+      const input = document.getElementById("searchInput");
+      input.addEventListener("input", () => {
+        searchTerm = input.value.trim();
+        renderFreelancers();
+        renderProjects();
+        renderAssignments();
+      });
+    }
+
+    function setupForms() {
+      // Freelancers
+      document.getElementById("freelancerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const payload = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          location: form.location.value.trim(),
+          hourly_rate: form.hourly_rate.value ? Number(form.hourly_rate.value) : null,
+          skills: form.skills.value.trim(),
+          status: form.status.value,
+          notes: form.notes.value.trim(),
+        };
+
+        try {
+          const res = await fetch(API_BASE + "/freelancers", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error("HTTP " + res.status + ": " + text);
+          }
+          showToast("Freelancer saved");
+          form.reset();
+          await loadAll();
+        } catch (err) {
+          console.error("Error saving freelancer:", err);
+          const errorEl = document.getElementById("freelancerError");
+          errorEl.textContent =
+            "Could not save freelancer. If email must be unique, check duplicates. (" +
+            err.message +
+            ")";
+          errorEl.style.display = "block";
+        }
+      });
+
+      // Projects
+      document.getElementById("projectForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const payload = {
+          title: form.title.value.trim(),
+          client_name: form.client_name.value.trim(),
+          status: form.status.value,
+          budget: form.budget.value ? Number(form.budget.value) : null,
+          start_date: form.start_date.value || null,
+          end_date: form.end_date.value || null,
+          notes: form.notes.value.trim(),
+        };
+
+        try {
+          const res = await fetch(API_BASE + "/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error("HTTP " + res.status + ": " + text);
+          }
+          showToast("Project saved");
+          form.reset();
+          await loadAll();
+        } catch (err) {
+          console.error("Error saving project:", err);
+          const errorEl = document.getElementById("projectError");
+          errorEl.textContent = "Could not save project (" + err.message + ")";
+          errorEl.style.display = "block";
+        }
+      });
+
+      // Assignments
+      document.getElementById("assignmentForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const payload = {
+          freelancer_id: form.freelancer_id.value
+            ? Number(form.freelancer_id.value)
+            : null,
+          project_id: form.project_id.value ? Number(form.project_id.value) : null,
+          role: form.role.value.trim(),
+          status: form.status.value,
+          start_date: form.start_date.value || null,
+          end_date: form.end_date.value || null,
+        };
+
+        try {
+          const res = await fetch(API_BASE + "/assignments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error("HTTP " + res.status + ": " + text);
+          }
+          showToast("Assignment saved");
+          form.reset();
+          await loadAll();
+        } catch (err) {
+          console.error("Error saving assignment:", err);
+          const errorEl = document.getElementById("assignmentError");
+          errorEl.textContent =
+            "Could not save assignment. Make sure freelancer & project IDs exist. (" +
+            err.message +
+            ")";
+          errorEl.style.display = "block";
+        }
+      });
+    }
+
+    document.getElementById("refreshAllBtn").addEventListener("click", () => {
+      loadAll().then(() => showToast("Data refreshed"));
+    });
+
+    // Init on load
+    setToday();
+    setupTabs();
+    setupSearch();
+    setupForms();
+    loadAll();
+  </script>
+</body>
+</html>

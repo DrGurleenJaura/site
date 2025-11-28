@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin – Careers Portal | DGx Creators</title>
+    <meta
+      name="description"
+      content="Admin panel for managing job openings at DGx Creators. Add, edit and remove job listings displayed on the careers page."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <style>
+      /* Admin specific UI */
+      .admin-wrap {
+        max-width: 780px;
+        margin: 60px auto;
+        background: #fff;
+        padding: 35px;
+        border-radius: 16px;
+        border: 1px solid #e5e5e5;
+      }
+
+      .admin-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .admin-desc {
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        font-size: 0.9rem;
+        color: #333;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 18px;
+        background: #fafafa;
+      }
+
+      .job-list {
+        margin-top: 40px;
+      }
+
+      .job-item {
+        border: 1px solid #e4e4e4;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        background: #fff;
+      }
+
+      .job-item h3 {
+        margin-bottom: 6px;
+      }
+
+      .delete-btn {
+        background: #d9534f;
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .delete-btn:hover {
+        background: #c9302c;
+      }
+
+      .small-note {
+        margin-top: 8px;
+        color: #777;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+
+  <body class="page-light">
+    <header class="header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="DGx Creators Logo" class="brand-logo" />
+          <div class="brand-info">
+            <div class="brand-title">DGx Creators</div>
+            <div class="brand-sub">Admin Panel</div>
+          </div>
+        </a>
+
+        <div class="header-cta">
+          <a href="career.html" class="btn-outline">View Careers Page</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Admin Panel -->
+    <div class="admin-wrap">
+      <h1 class="admin-title">Careers Admin Panel</h1>
+      <p class="admin-desc">Create job posts that will appear on the public careers page.</p>
+
+      <div class="form-group">
+        <label>Job Title *</label>
+        <input type="text" id="jobTitle" required />
+      </div>
+
+      <div class="form-group">
+        <label>Location *</label>
+        <input type="text" id="jobLocation" required />
+      </div>
+
+      <div class="form-group">
+        <label>Short Description *</label>
+        <textarea id="jobDesc" rows="3" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Google Form Apply Link *</label>
+        <input type="text" id="applyLink" required />
+      </div>
+
+      <div class="form-group">
+        <label>LinkedIn Post Link (optional)</label>
+        <input type="text" id="linkedinLink" />
+      </div>
+
+      <button class="btn-primary" id="addJobBtn">Add Job</button>
+
+      <p class="small-note">
+        Jobs are saved in your browser. They appear instantly on the public careers page.
+      </p>
+
+      <!-- Job List -->
+      <div class="job-list" id="jobList"></div>
+    </div>
+
+    <script>
+      // Load jobs from LocalStorage
+      function loadJobs() {
+        const jobs = JSON.parse(localStorage.getItem("dgx_jobs") || "[]");
+        const jobList = document.getElementById("jobList");
+        jobList.innerHTML = "";
+
+        jobs.forEach((job, index) => {
+          const div = document.createElement("div");
+          div.className = "job-item";
+          div.innerHTML = `
+            <h3>${job.title}</h3>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p>${job.desc}</p>
+            <p><strong>Apply Link:</strong> <a href="${job.apply}" target="_blank">${job.apply}</a></p>
+            ${
+              job.linkedin
+                ? `<p><strong>LinkedIn:</strong> <a href="${job.linkedin}" target="_blank">${job.linkedin}</a></p>`
+                : ""
+            }
+            <button class="delete-btn" onclick="deleteJob(${index})">Delete</button>
+          `;
+          jobList.appendChild(div);
+        });
+      }
+
+      // Add job
+      document.getElementById("addJobBtn").addEventListener("click", () => {
+        const title = document.getElementById("jobTitle").value.trim();
+        const location = document.getElementById("jobLocation").value.trim();
+        const desc = document.getElementById("jobDesc").value.trim();
+        const apply = document.getElementById("applyLink").value.trim();
+        const linkedin = document.getElementById("linkedinLink").value.trim();
+
+        if (!title || !location || !desc || !apply) {
+          alert("Please fill all required fields.");
+          return;
+        }
+
+        const jobs = JSON.parse(localStorage.getItem("dgx_jobs") || "[]");
+
+        jobs.push({
+          title,
+          location,
+          desc,
+          apply,
+          linkedin,
+        });
+
+        localStorage.setItem("dgx_jobs", JSON.stringify(jobs));
+
+        document.getElementById("jobTitle").value = "";
+        document.getElementById("jobLocation").value = "";
+        document.getElementById("jobDesc").value = "";
+        document.getElementById("applyLink").value = "";
+        document.getElementById("linkedinLink").value = "";
+
+        loadJobs();
+        alert("Job added successfully!");
+      });
+
+      // Delete job
+      function deleteJob(index) {
+        const jobs = JSON.parse(localStorage.getItem("dgx_jobs") || "[]");
+        jobs.splice(index, 1);
+        localStorage.setItem("dgx_jobs", JSON.stringify(jobs));
+        loadJobs();
+      }
+
+      loadJobs();
+    </script>
+  </body>
+</html>

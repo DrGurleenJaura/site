@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DGx Freelance Admin – Projects & Talent</title>
+    <meta
+      name="description"
+      content="Internal freelance management dashboard for DGx Creators to track freelancers, projects, assignments and payouts."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Optional: if you want to reuse main site styles, keep this -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Dashboard-specific styles (grey + white, minimal but clean) -->
+    <style>
+      :root {
+        --dash-bg: #f3f4f6;
+        --dash-surface: #ffffff;
+        --dash-surface-soft: #f9fafb;
+        --dash-border: #e5e7eb;
+        --dash-text-main: #111827;
+        --dash-text-muted: #6b7280;
+        --dash-primary: #111827;
+        --dash-primary-soft: #e5e7eb;
+        --dash-accent: #4b5563;
+        --dash-radius-lg: 18px;
+        --dash-radius-md: 12px;
+        --dash-shadow-soft: 0 14px 35px rgba(15, 23, 42, 0.08);
+      }
+
+      body {
+        background: radial-gradient(circle at top left, #f9fafb, #e5e7eb);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--dash-text-main);
+      }
+
+      .dash-shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .dash-header {
+        background: rgba(17, 24, 39, 0.98);
+        color: #f9fafb;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+
+      .dash-header-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0.9rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .dash-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .dash-brand-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        overflow: hidden;
+        border: 1px solid rgba(249, 250, 251, 0.15);
+        background: radial-gradient(circle at 0 0, #4b5563, #111827);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .dash-brand-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .dash-brand-text-main {
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+
+      .dash-brand-text-sub {
+        font-size: 0.75rem;
+        color: #d1d5db;
+      }
+
+      .dash-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .dash-pill {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(209, 213, 219, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #e5e7eb;
+        background: rgba(15, 23, 42, 0.6);
+      }
+
+      .dash-pill-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #10b981;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+      }
+
+      .dash-btn {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(249, 250, 251, 0.5);
+        background: transparent;
+        color: #f9fafb;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .dash-btn-primary {
+        background: #f9fafb;
+        color: #111827;
+        border-color: #f9fafb;
+        font-weight: 500;
+      }
+
+      .dash-main {
+        flex: 1;
+        max-width: 1120px;
+        margin: 1.4rem auto 1.6rem;
+        padding: 0 1rem 2rem;
+      }
+
+      .dash-grid {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 1.3rem;
+        align-items: flex-start;
+      }
+
+      @media (max-width: 900px) {
+        .dash-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .dash-panel {
+        background: rgba(249, 250, 251, 0.9);
+        border-radius: var(--dash-radius-lg);
+        padding: 1.1rem 1rem;
+        border: 1px solid var(--dash-border);
+        box-shadow: var(--dash-shadow-soft);
+        backdrop-filter: blur(16px);
+      }
+
+      .dash-panel-soft {
+        background: radial-gradient(circle at top left, #f9fafb, #f3f4f6);
+      }
+
+      .dash-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .dash-panel-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-panel-sub {
+        font-size: 0.8rem;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+      }
+
+      .dash-badge {
+        font-size: 0.75rem;
+        padding: 0.28rem 0.6rem;
+        border-radius: 999px;
+        background: var(--dash-surface);
+        border: 1px solid var(--dash-border);
+        color: var(--dash-text-muted);
+      }
+
+      .dash-metric-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .dash-metric {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0.55rem;
+        border-radius: 999px;
+        background: var(--dash-surface);
+        border: 1px dashed var(--dash-border);
+      }
+
+      .dash-metric-label {
+        font-size: 0.78rem;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-metric-value {
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .dash-filter-group {
+        margin-top: 0.8rem;
+        border-top: 1px dashed var(--dash-border);
+        padding-top: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .dash-filter-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .dash-chip {
+        font-size: 0.76rem;
+        padding: 0.32rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--dash-border);
+        background: var(--dash-surface);
+        cursor: pointer;
+      }
+
+      .dash-chip-active {
+        border-color: var(--dash-text-main);
+        background: #111827;
+        color: #f9fafb;
+      }
+
+      /* MAIN CONTENT */
+
+      .dash-tabs {
+        display: flex;
+        gap: 0.4rem;
+        padding: 0.15rem;
+        background: var(--dash-surface-soft);
+        border-radius: 999px;
+        border: 1px solid var(--dash-border);
+        margin-bottom: 0.9rem;
+        align-items: center;
+      }
+
+      .dash-tab {
+        flex: 1;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.45rem 0.3rem;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-tab-active {
+        background: #111827;
+        color: #f9fafb;
+        font-weight: 500;
+      }
+
+      .dash-tab-label-sub {
+        display: block;
+        font-size: 0.65rem;
+        opacity: 0.7;
+      }
+
+      .dash-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.9rem;
+      }
+
+      .dash-toolbar-left {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .dash-field {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.32rem 0.7rem;
+        border-radius: 999px;
+        background: var(--dash-surface-soft);
+        border: 1px solid var(--dash-border);
+      }
+
+      .dash-field input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 0.78rem;
+        color: var(--dash-text-main);
+        min-width: 150px;
+      }
+
+      .dash-field span {
+        font-size: 0.75rem;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-btn-ghost {
+        font-size: 0.78rem;
+        padding: 0.32rem 0.75rem;
+        border-radius: 999px;
+        border: 1px dashed var(--dash-border);
+        background: var(--dash-surface-soft);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .dash-table-wrapper {
+        border-radius: var(--dash-radius-md);
+        border: 1px solid var(--dash-border);
+        background: var(--dash-surface);
+        overflow: hidden;
+      }
+
+      .dash-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+      }
+
+      .dash-table thead {
+        background: var(--dash-surface-soft);
+      }
+
+      .dash-table th,
+      .dash-table td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid var(--dash-border);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .dash-table th {
+        font-weight: 500;
+        color: var(--dash-text-muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .dash-status-pill {
+        padding: 0.16rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        border: 1px solid var(--dash-border);
+      }
+
+      .dash-status-active {
+        background: #ecfdf5;
+        color: #166534;
+        border-color: #bbf7d0;
+      }
+
+      .dash-status-pending {
+        background: #fffbeb;
+        color: #854d0e;
+        border-color: #facc15;
+      }
+
+      .dash-status-hold {
+        background: #fef2f2;
+        color: #991b1b;
+        border-color: #fecaca;
+      }
+
+      .dash-avatar-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .dash-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--dash-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--dash-accent);
+      }
+
+      .dash-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .dash-avatar-label-main {
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .dash-avatar-label-sub {
+        font-size: 0.72rem;
+        color: var(--dash-text-muted);
+      }
+
+      .dash-tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      .dash-tag {
+        font-size: 0.7rem;
+        padding: 0.18rem 0.45rem;
+        border-radius: 999px;
+        background: var(--dash-surface-soft);
+        border: 1px solid var(--dash-border);
+        color: var(--dash-text-muted);
+      }
+
+      .dash-table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.75rem;
+        color: var(--dash-text-muted);
+        background: var(--dash-surface-soft);
+      }
+
+      .dash-link {
+        color: var(--dash-text-main);
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dash-shell">
+      <!-- Top Admin Header -->
+      <header class="dash-header">
+        <div class="dash-header-inner">
+          <div class="dash-brand">
+            <!-- If you want to use your real logo, drop logo.png into assets and uncomment img -->
+            <div class="dash-brand-logo">
+              <!-- <img src="assets/logo.png" alt="DGx Creators Logo" /> -->
+              DGx
+            </div>
+            <div>
+              <div class="dash-brand-text-main">DGx Freelance Admin</div>
+              <div class="dash-brand-text-sub">Projects · Talent · Payouts</div>
+            </div>
+          </div>
+
+          <div class="dash-header-actions">
+            <div class="dash-pill">
+              <span class="dash-pill-dot"></span>
+              Internal use · Admin only
+            </div>
+            <button class="dash-btn">Export CSV</button>
+            <button class="dash-btn dash-btn-primary">+ New Project</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <main class="dash-main">
+        <div class="dash-grid">
+          <!-- LEFT: Overview + Filters -->
+          <aside class="dash-panel dash-panel-soft">
+            <div class="dash-panel-header">
+              <div>
+                <div class="dash-panel-title">Overview</div>
+                <div class="dash-panel-sub">Snapshot of your freelance workload</div>
+              </div>
+            </div>
+
+            <div class="dash-badges">
+              <span class="dash-badge">Total projects: 8</span>
+              <span class="dash-badge">Active freelancers: 12</span>
+              <span class="dash-badge">This month payout: ₹ 1,25,000</span>
+            </div>
+
+            <div class="dash-metric-row">
+              <div class="dash-metric">
+                <div class="dash-metric-label">In progress</div>
+                <div class="dash-metric-value">4 projects</div>
+              </div>
+              <div class="dash-metric">
+                <div class="dash-metric-label">Pending invoices</div>
+                <div class="dash-metric-value">3 freelancers</div>
+              </div>
+              <div class="dash-metric">
+                <div class="dash-metric-label">Preferred skill pool</div>
+                <div class="dash-metric-value">EdTech · AI · Localization</div>
+              </div>
+            </div>
+
+            <div class="dash-filter-group">
+              <div>
+                <div class="dash-filter-label">Focus</div>
+                <div class="dash-filter-row">
+                  <button class="dash-chip dash-chip-active">All</button>
+                  <button class="dash-chip">EdTech</button>
+                  <button class="dash-chip">AI & ML</button>
+                  <button class="dash-chip">Annotation</button>
+                  <button class="dash-chip">Design</button>
+                </div>
+              </div>
+
+              <div>
+                <div class="dash-filter-label">Status</div>
+                <div class="dash-filter-row">
+                  <button class="dash-chip">Upcoming</button>
+                  <button class="dash-chip">In progress</button>
+                  <button class="dash-chip">On hold</button>
+                  <button class="dash-chip">Completed</button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- RIGHT: Tabs + Tables -->
+          <section class="dash-panel">
+            <!-- Tabs -->
+            <div class="dash-tabs">
+              <button class="dash-tab dash-tab-active">
+                Projects
+                <span class="dash-tab-label-sub">Assignments & status</span>
+              </button>
+              <button class="dash-tab">
+                Freelancers
+                <span class="dash-tab-label-sub">Profiles & skills</span>
+              </button>
+              <button class="dash-tab">
+                Payouts
+                <span class="dash-tab-label-sub">Invoices & amounts</span>
+              </button>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="dash-toolbar">
+              <div class="dash-toolbar-left">
+                <div class="dash-field">
+                  <span>Search</span>
+                  <input type="text" placeholder="Project or client name" />
+                </div>
+                <button class="dash-btn-ghost">Filter by client</button>
+                <button class="dash-btn-ghost">Filter by owner</button>
+              </div>
+              <div>
+                <button class="dash-btn-ghost">Saved view: Default</button>
+              </div>
+            </div>
+
+            <!-- Table: Projects -->
+            <div class="dash-table-wrapper">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Client / Vertical</th>
+                    <th>Lead & Team</th>
+                    <th>Deliverables</th>
+                    <th>Status</th>
+                    <th>Payout</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="dash-avatar-cell">
+                        <div class="dash-avatar">
+                          <!-- Placeholder image area for project thumbnail -->
+                          <!-- <img src="assets/projects/edtech-portal.jpg" alt="Project image" /> -->
+                          EP
+                        </div>
+                        <div>
+                          <div class="dash-avatar-label-main">EdTech Portal Question Bank</div>
+                          <div class="dash-avatar-label-sub">Deadline: 18 Dec · Remote</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">US EdTech Client</div>
+                      <div class="dash-avatar-label-sub">K–12 · MCQ creation</div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">Owner: Gurleen</div>
+                      <div class="dash-avatar-label-sub">Freelancers: 4</div>
+                    </td>
+                    <td>
+                      <div class="dash-tag-row">
+                        <span class="dash-tag">Item writing</span>
+                        <span class="dash-tag">Review</span>
+                        <span class="dash-tag">Spreadsheet</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="dash-status-pill dash-status-active">In progress</span>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">₹ 65,000</div>
+                      <div class="dash-avatar-label-sub">Split by word count</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="dash-avatar-cell">
+                        <div class="dash-avatar">
+                          <!-- Example: image placeholder for AI project -->
+                          AI
+                        </div>
+                        <div>
+                          <div class="dash-avatar-label-main">AI Chatbot Training Data</div>
+                          <div class="dash-avatar-label-sub">Deadline: 03 Jan · Hybrid</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">Enterprise SaaS</div>
+                      <div class="dash-avatar-label-sub">NLP · Intent labelling</div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">Owner: DGx Ops</div>
+                      <div class="dash-avatar-label-sub">Freelancers: 6</div>
+                    </td>
+                    <td>
+                      <div class="dash-tag-row">
+                        <span class="dash-tag">Annotation</span>
+                        <span class="dash-tag">Quality audit</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="dash-status-pill dash-status-pending">Starting soon</span>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">₹ 90,000</div>
+                      <div class="dash-avatar-label-sub">Per task bundle</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="dash-avatar-cell">
+                        <div class="dash-avatar">
+                          LZ
+                        </div>
+                        <div>
+                          <div class="dash-avatar-label-main">Localization – Training Videos</div>
+                          <div class="dash-avatar-label-sub">Deadline: 27 Nov · Remote</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">EU Training Partner</div>
+                      <div class="dash-avatar-label-sub">Subtitles · Hindi & Punjabi</div>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">Owner: Content Team</div>
+                      <div class="dash-avatar-label-sub">Freelancers: 3</div>
+                    </td>
+                    <td>
+                      <div class="dash-tag-row">
+                        <span class="dash-tag">Subtitling</span>
+                        <span class="dash-tag">QC</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="dash-status-pill dash-status-hold">On hold – client review</span>
+                    </td>
+                    <td>
+                      <div class="dash-avatar-label-main">₹ 38,000</div>
+                      <div class="dash-avatar-label-sub">2 invoices pending</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="dash-table-footer">
+                <span>Showing 3 of 8 projects · This is a static view (no login yet).</span>
+                <span class="dash-link">View all projects</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
